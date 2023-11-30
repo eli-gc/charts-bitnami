@@ -802,10 +802,6 @@ You have two alternatives to use LoadBalancer services:
 
 ```console
 externalAccess.enabled=true
-externalAccess.service.broker.type=LoadBalancer
-externalAccess.service.controller.type=LoadBalancer
-externalAccess.service.broker.ports.external=9094
-externalAccess.service.controller.containerPorts.external=9094
 externalAccess.autoDiscovery.enabled=true
 serviceAccount.create=true
 rbac.create=true
@@ -817,14 +813,10 @@ Note: This option requires creating RBAC rules on clusters where RBAC policies a
 
 ```console
 externalAccess.enabled=true
-externalAccess.service.controller.type=LoadBalancer
-externalAccess.service.controller.containerPorts.external=9094
-externalAccess.service.controller.loadBalancerIPs[0]='external-ip-1'
-externalAccess.service.controller.loadBalancerIPs[1]='external-ip-2'
-externalAccess.service.broker.type=LoadBalancer
-externalAccess.service.broker.ports.external=9094
-externalAccess.service.broker.loadBalancerIPs[0]='external-ip-3'
-externalAccess.service.broker.loadBalancerIPs[1]='external-ip-4'
+externalAccess.controller.service.loadBalancerIPs[0]='external-ip-1'
+externalAccess.controller.service.loadBalancerIPs[1]='external-ip-2'
+externalAccess.broker.service.loadBalancerIPs[0]='external-ip-3'
+externalAccess.broker.service.loadBalancerIPs[1]='external-ip-4'
 ```
 
 Note: You need to know in advance the load balancer IPs so each Kafka broker advertised listener is configured with it.
@@ -900,11 +892,22 @@ tcp:
 
 You can use the following values to generate External-DNS annotations which automatically creates DNS records for each ReplicaSet pod:
 
+For controller:
 ```yaml
 externalAccess:
-  service:
-    annotations:
-      external-dns.alpha.kubernetes.io/hostname: "{{ .targetPod }}.example.com"
+  controller:
+    service:
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: "{{ .targetPod }}.example.com"
+```
+
+For broker:
+```yaml
+externalAccess:
+  broker:
+    service:
+      annotations:
+        external-dns.alpha.kubernetes.io/hostname: "{{ .targetPod }}.example.com"
 ```
 
 ### Sidecars
